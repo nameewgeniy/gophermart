@@ -1,0 +1,10 @@
+# syntax=docker/dockerfile:experimental
+
+FROM fedora
+WORKDIR /app
+COPY cmd/accrual/accrual_linux_amd64 /app/accrual_linux_amd64
+
+# REST
+EXPOSE 8080
+
+CMD ["/app/accrual_linux_amd64"]

@@ -1,0 +1,38 @@
+version: '3'
+
+services:
+
+  ########## POSTGRES ##########
+  postgres:
+    image: wodby/postgres:13
+    stop_grace_period: 30s
+    environment:
+      POSTGRES_MAX_CONNECTIONS: 1000
+      POSTGRES_PASSWORD: password
+      POSTGRES_USER: user
+      POSTGRES_DB: db
+    volumes:
+      - postgres_data
+    ports:
+      - "5452:5432"
+    networks:
+      gophemart:
+
+  ########## accrual ##########
+  accrual:
+    build:
+      context: ../.
+      dockerfile: build/Dockerfile-accrual
+    ports:
+      - "8088:8080"
+    networks:
+      gophemart:
+
+networks:
+  gophemart:
+    driver: bridge
+    ipam:
+      driver: default
+
+volumes:
+  postgres_data:
