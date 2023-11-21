@@ -1,11 +1,12 @@
 package main
 
 import (
-	"fmt"
 	"gophermart/internal/config"
+	"gophermart/internal/logger"
+	"gophermart/internal/server"
+	"gophermart/internal/server/handlers"
 	"log"
 	"net/http"
-	"time"
 )
 
 func main() {
@@ -19,20 +20,16 @@ func run() error {
 	// Init configuration
 	config.Singleton()
 
-	srv := &http.Server{
-		Addr:         config.Conf.ServerAddr(),
-		WriteTimeout: 5 * time.Second,
-		ReadTimeout:  5 * time.Second,
+	// Init logger
+	if err := logger.Singleton(config.Conf.LogLevel()); err != nil {
+		return err
 	}
 
-	//go func() {
-	//	<-ctx.Done()
-	//	_ = srv.Shutdown(context.Background())
-	//}()
+	muxHandlers := handlers.NewMuxHandlers()
 
-	fmt.Println("Server up")
+	srv := server.New(muxHandlers)
 
-	if err := srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
+	if err := srv.Run(); err != nil && err != http.ErrServerClosed {
 		return err
 	}
 

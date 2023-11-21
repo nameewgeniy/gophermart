@@ -1,0 +1,43 @@
+### register
+POST {{gophermart_host}}/api/user/register
+Content-Type: application/json
+
+{
+  "login": "<login>",
+  "password": "<password>"
+}
+
+### login
+POST {{gophermart_host}}/api/user/login
+Content-Type: application/json
+
+{
+"login": "<login>",
+"password": "<password>"
+}
+
+### create orders
+POST {{gophermart_host}}/api/user/orders HTTP/1.1
+Authorization: Bearer {{auth_token}}
+Content-Type: text/plain
+
+### get orders
+GET {{gophermart_host}}/api/user/orders HTTP/1.1
+
+### get balance
+GET {{gophermart_host}}/api/user/balance HTTP/1.1
+
+### withdraw balance
+POST {{gophermart_host}}/api/user/balance/withdraw HTTP/1.1
+Content-Type: application/json
+
+{
+    "order": "2377225624",
+    "sum": 751
+}
+
+### get withdrawals
+GET {{gophermart_host}}/api/user/withdrawals HTTP/1.1
+
+### get accrual order
+GET {{accrual_host}}/api/orders/{number} HTTP/1.1
