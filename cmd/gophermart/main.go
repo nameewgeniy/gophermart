@@ -1,12 +1,13 @@
 package main
 
 import (
+	"gophermart/internal"
 	"gophermart/internal/config"
+	"gophermart/internal/domain/controllers/api/rest"
+	"gophermart/internal/domain/repositories/pg"
+	"gophermart/internal/domain/services"
 	"gophermart/internal/logger"
-	"gophermart/internal/server"
-	"gophermart/internal/server/handlers"
 	"log"
-	"net/http"
 )
 
 func main() {
@@ -25,13 +26,30 @@ func run() error {
 		return err
 	}
 
-	muxHandlers := handlers.NewMuxHandlers()
-
-	srv := server.New(muxHandlers)
-
-	if err := srv.Run(); err != nil && err != http.ErrServerClosed {
+	// Init pg storage
+	storage, err := pg.New()
+	if err != nil {
 		return err
 	}
 
-	return nil
+	// Init services
+	au := services.NewAuthService(
+		storage,
+		config.Conf.AuthSecretKey(),
+		config.Conf.AuthAccessTTL(),
+		config.Conf.AuthRefreshTTL(),
+	)
+
+	us := services.NewUserService(storage)
+
+	// Init controllers
+	restApi := rest.New(us, au)
+
+	// Init app
+	app := internal.New(
+		storage,
+		restApi,
+	)
+
+	return app.Run()
 }

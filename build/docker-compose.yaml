@@ -11,8 +11,6 @@ services:
       POSTGRES_PASSWORD: password
       POSTGRES_USER: user
       POSTGRES_DB: db
-    volumes:
-      - postgres_data
     ports:
       - "5452:5432"
     networks:
