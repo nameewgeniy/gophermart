@@ -65,16 +65,19 @@ func (a AppImpl) listen(ctx context.Context) error {
 	r := mux.NewRouter()
 	api := r.PathPrefix("/api").Subrouter()
 	user := api.PathPrefix("/user").Subrouter()
+	//auth := api.PathPrefix("").Subrouter()
 
-	r.Handle("/ping", middleware.RequestLogger(a.h.Health)).Methods(http.MethodGet)
+	api.Use(middleware.RequestLogger)
 
-	user.Handle("/register", middleware.RequestLogger(a.h.UserRegister)).Methods(http.MethodPost)
-	user.Handle("/login", middleware.RequestLogger(a.h.UserLogin)).Methods(http.MethodPost)
-	user.Handle("/orders", middleware.RequestLogger(a.h.UserCreateOrders)).Methods(http.MethodPost)
-	user.Handle("/orders", middleware.RequestLogger(a.h.UserGetOrders)).Methods(http.MethodGet)
-	user.Handle("/balance", middleware.RequestLogger(a.h.UserBalance)).Methods(http.MethodGet)
-	user.Handle("/balance/withdraw", middleware.RequestLogger(a.h.UserBalanceWithdraw)).Methods(http.MethodPost)
-	user.Handle("/withdrawals", middleware.RequestLogger(a.h.UserWithdraws)).Methods(http.MethodGet)
+	r.Handle("/ping", http.HandlerFunc(a.h.Health)).Methods(http.MethodGet)
+
+	user.Handle("/register", http.HandlerFunc(a.h.UserRegister)).Methods(http.MethodPost)
+	user.Handle("/login", http.HandlerFunc(a.h.UserLogin)).Methods(http.MethodPost)
+	user.Handle("/orders", http.HandlerFunc(a.h.UserCreateOrders)).Methods(http.MethodPost)
+	user.Handle("/orders", http.HandlerFunc(a.h.UserGetOrders)).Methods(http.MethodGet)
+	user.Handle("/balance", http.HandlerFunc(a.h.UserBalance)).Methods(http.MethodGet)
+	user.Handle("/balance/withdraw", http.HandlerFunc(a.h.UserBalanceWithdraw)).Methods(http.MethodPost)
+	user.Handle("/withdrawals", http.HandlerFunc(a.h.UserWithdraws)).Methods(http.MethodGet)
 
 	srv := &http.Server{
 		Handler:      r,

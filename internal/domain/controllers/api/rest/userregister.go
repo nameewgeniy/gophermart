@@ -11,5 +11,7 @@ func (h RESTControllersImpl) UserRegister(w http.ResponseWriter, r *http.Request
 		Password: "",
 	})
 
+	w.Header().Set("Content-type", "application/json")
+	w.Header().Set("Authorization", "dfsdfsdf")
 	w.WriteHeader(http.StatusOK)
 }

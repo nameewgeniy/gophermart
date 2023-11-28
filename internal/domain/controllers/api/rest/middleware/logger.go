@@ -9,7 +9,7 @@ import (
 )
 
 // RequestLogger — middleware-логер для входящих HTTP-запросов.
-func RequestLogger(next http.HandlerFunc) http.HandlerFunc {
+func RequestLogger(next http.Handler) http.Handler {
 
 	logFn := func(w http.ResponseWriter, r *http.Request) {
 		start := time.Now()
@@ -27,5 +27,5 @@ func RequestLogger(next http.HandlerFunc) http.HandlerFunc {
 			zap.Int("size", lw.Info.Size()),
 		)
 	}
-	return logFn
+	return http.HandlerFunc(logFn)
 }

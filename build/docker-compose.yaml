@@ -4,7 +4,7 @@ services:
 
   ########## POSTGRES ##########
   postgres:
-    image: wodby/postgres:13
+    image: wodby/postgres:12
     stop_grace_period: 30s
     environment:
       POSTGRES_MAX_CONNECTIONS: 1000
