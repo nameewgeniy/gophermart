@@ -1,4 +1,4 @@
-package services
+package auth
 
 import (
 	"errors"
@@ -6,6 +6,7 @@ import (
 	"golang.org/x/crypto/bcrypt"
 	"gophermart/internal/domain/models"
 	"gophermart/internal/domain/repositories"
+	"sync"
 	"time"
 )
 
@@ -22,6 +23,12 @@ var (
 	ErrUnexpectedMethod = errors.New("unexpected token signing method")
 	ErrInvalidClaims    = errors.New("invalid token claims")
 	ErrInvalidType      = errors.New("invalid token type")
+	ErrInvalidToken     = errors.New("invalid token ")
+)
+
+var (
+	Instance *JWTAuth
+	once     sync.Once
 )
 
 type JWTAuth struct {
@@ -32,12 +39,16 @@ type JWTAuth struct {
 }
 
 func NewAuthService(ur repositories.UserRepository, sk []byte, aTtl, rTtl int) *JWTAuth {
-	return &JWTAuth{
-		ur:         ur,
-		secretKey:  sk,
-		accessTTL:  aTtl,
-		refreshTTL: rTtl,
-	}
+	once.Do(func() {
+		Instance = &JWTAuth{
+			ur:         ur,
+			secretKey:  sk,
+			accessTTL:  aTtl,
+			refreshTTL: rTtl,
+		}
+	})
+
+	return Instance
 }
 
 // PasswordHash generate hash from password

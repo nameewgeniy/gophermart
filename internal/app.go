@@ -2,11 +2,9 @@ package internal
 
 import (
 	"fmt"
-	"github.com/gorilla/mux"
 	"golang.org/x/sync/errgroup"
 	"gophermart/internal/config"
 	"gophermart/internal/domain/controllers/api/rest"
-	"gophermart/internal/domain/controllers/api/rest/middleware"
 	"gophermart/internal/domain/repositories"
 	"os"
 	"os/signal"
@@ -62,25 +60,8 @@ func (a AppImpl) Run() error {
 
 func (a AppImpl) listen(ctx context.Context) error {
 
-	r := mux.NewRouter()
-	api := r.PathPrefix("/api").Subrouter()
-	user := api.PathPrefix("/user").Subrouter()
-	//auth := api.PathPrefix("").Subrouter()
-
-	api.Use(middleware.RequestLogger)
-
-	r.Handle("/ping", http.HandlerFunc(a.h.Health)).Methods(http.MethodGet)
-
-	user.Handle("/register", http.HandlerFunc(a.h.UserRegister)).Methods(http.MethodPost)
-	user.Handle("/login", http.HandlerFunc(a.h.UserLogin)).Methods(http.MethodPost)
-	user.Handle("/orders", http.HandlerFunc(a.h.UserCreateOrders)).Methods(http.MethodPost)
-	user.Handle("/orders", http.HandlerFunc(a.h.UserGetOrders)).Methods(http.MethodGet)
-	user.Handle("/balance", http.HandlerFunc(a.h.UserBalance)).Methods(http.MethodGet)
-	user.Handle("/balance/withdraw", http.HandlerFunc(a.h.UserBalanceWithdraw)).Methods(http.MethodPost)
-	user.Handle("/withdrawals", http.HandlerFunc(a.h.UserWithdraws)).Methods(http.MethodGet)
-
 	srv := &http.Server{
-		Handler:      r,
+		Handler:      a.h.Router(),
 		Addr:         config.Conf.ServerAddr(),
 		WriteTimeout: 5 * time.Second,
 		ReadTimeout:  5 * time.Second,

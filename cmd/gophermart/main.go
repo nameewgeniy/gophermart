@@ -6,6 +6,7 @@ import (
 	"gophermart/internal/domain/controllers/api/rest"
 	"gophermart/internal/domain/repositories/pg"
 	"gophermart/internal/domain/services"
+	"gophermart/internal/domain/services/auth"
 	"gophermart/internal/logger"
 	"log"
 )
@@ -33,7 +34,7 @@ func run() error {
 	}
 
 	// Init services
-	au := services.NewAuthService(
+	au := auth.NewAuthService(
 		storage,
 		config.Conf.AuthSecretKey(),
 		config.Conf.AuthAccessTTL(),
