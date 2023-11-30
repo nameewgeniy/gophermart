@@ -25,7 +25,7 @@ func (p Pg) Up(ctx context.Context) error {
 func (p Pg) Down(_ context.Context) error {
 	logger.Log.Info("Storage down")
 
-	if config.Conf.DownMigrations() {
+	if config.Instance.DownMigrations() {
 		defer p.migrationDown()
 	}
 

@@ -28,7 +28,7 @@ func New() (*Pg, error) {
 }
 
 func initDB() (*sql.DB, error) {
-	conn, err := sql.Open("pgx", config.Conf.DatabaseDsn())
+	conn, err := sql.Open("pgx", config.Instance.DatabaseDsn())
 
 	if err != nil {
 		return nil, err

@@ -3,6 +3,7 @@ package config
 import (
 	"flag"
 	"os"
+	"sync"
 )
 
 type CnfContract interface {
@@ -14,21 +15,25 @@ type CnfContract interface {
 	AuthSecretKey() []byte
 	AuthAccessTTL() int
 	AuthRefreshTTL() int
+	Parse()
 }
 
-var Conf CnfContract
+var (
+	Instance CnfContract
+	once     sync.Once
+)
 
-func Singleton() {
-	if Conf != nil {
-		return
-	}
+func New() CnfContract {
+	once.Do(func() {
+		Instance = &cnf{
+			logLevel:   "info",
+			accessTTL:  1800,
+			refreshTTL: 3600,
+		}
 
-	c := cnf{
-		logLevel: "info",
-	}
-	c.parse()
+	})
 
-	Conf = &c
+	return Instance
 }
 
 type cnf struct {
@@ -42,7 +47,7 @@ type cnf struct {
 	refreshTTL     int
 }
 
-func (c *cnf) parse() {
+func (c *cnf) Parse() {
 	flag.StringVar(&c.serverAddr, "a", "localhost:8090", "address")
 	flag.StringVar(&c.accrualAddress, "r", "localhost:8088", "accrual address")
 	flag.StringVar(&c.databaseDsn, "d", "postgres://user:password@localhost:5452/db?sslmode=disable", "database dsn")

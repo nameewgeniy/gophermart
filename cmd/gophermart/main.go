@@ -5,8 +5,8 @@ import (
 	"gophermart/internal/config"
 	"gophermart/internal/domain/controllers/api/rest"
 	"gophermart/internal/domain/repositories/pg"
-	"gophermart/internal/domain/services"
 	"gophermart/internal/domain/services/auth"
+	"gophermart/internal/domain/services/user"
 	"gophermart/internal/logger"
 	"log"
 )
@@ -20,10 +20,10 @@ func main() {
 func run() error {
 
 	// Init configuration
-	config.Singleton()
+	config.New().Parse()
 
 	// Init logger
-	if err := logger.Singleton(config.Conf.LogLevel()); err != nil {
+	if err := logger.Singleton(config.Instance.LogLevel()); err != nil {
 		return err
 	}
 
@@ -36,12 +36,12 @@ func run() error {
 	// Init services
 	au := auth.NewAuthService(
 		storage,
-		config.Conf.AuthSecretKey(),
-		config.Conf.AuthAccessTTL(),
-		config.Conf.AuthRefreshTTL(),
+		config.Instance.AuthSecretKey(),
+		config.Instance.AuthAccessTTL(),
+		config.Instance.AuthRefreshTTL(),
 	)
 
-	us := services.NewUserService(storage)
+	us := user.NewUserService(storage, au)
 
 	// Init controllers
 	restApi := rest.New(us, au)

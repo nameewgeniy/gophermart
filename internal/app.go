@@ -62,7 +62,7 @@ func (a AppImpl) listen(ctx context.Context) error {
 
 	srv := &http.Server{
 		Handler:      a.h.Router(),
-		Addr:         config.Conf.ServerAddr(),
+		Addr:         config.Instance.ServerAddr(),
 		WriteTimeout: 5 * time.Second,
 		ReadTimeout:  5 * time.Second,
 	}

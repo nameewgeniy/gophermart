@@ -5,12 +5,11 @@ import (
 	"net/http"
 )
 
-func (h RESTControllersImpl) UserBalance(w http.ResponseWriter, r *http.Request) {
+func (h RESTControllersImpl) UserWithdraws(w http.ResponseWriter, r *http.Request) {
 
-	res, err := h.userService.UserBalance()
+	res, err := h.userService.UserWithdraws()
 
 	if err != nil {
-		// TODO неверная пара логин/пароль; 401
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}

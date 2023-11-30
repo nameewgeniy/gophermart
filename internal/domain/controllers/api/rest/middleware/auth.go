@@ -16,7 +16,7 @@ func Auth(next http.Handler) http.Handler {
 		}
 
 		if _, err := auth.Instance.VerifyToken(r.Header.Get("Authorization"), models.TokenTypeAccess); err != nil {
-			http.Error(w, auth.ErrInvalidToken.Error(), http.StatusBadRequest)
+			http.Error(w, auth.ErrInvalidToken.Error(), http.StatusUnauthorized)
 			return
 		}
 

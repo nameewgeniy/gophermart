@@ -16,19 +16,27 @@ Content-Type: application/json
 "password": "<password>"
 }
 
+> {% client.global.set("auth_token", response.headers.valueOf("Authorization")); %}
+
 ### create orders
 POST {{gophermart_host}}/api/user/orders HTTP/1.1
-Authorization: Bearer {{auth_token}}
+Authorization: {{auth_token}}
 Content-Type: text/plain
 
+12345678903
 ### get orders
 GET {{gophermart_host}}/api/user/orders HTTP/1.1
+Authorization: {{auth_token}}
+
 
 ### get balance
 GET {{gophermart_host}}/api/user/balance HTTP/1.1
+Authorization: {{auth_token}}
+
 
 ### withdraw balance
 POST {{gophermart_host}}/api/user/balance/withdraw HTTP/1.1
+Authorization: {{auth_token}}
 Content-Type: application/json
 
 {
@@ -38,6 +46,10 @@ Content-Type: application/json
 
 ### get withdrawals
 GET {{gophermart_host}}/api/user/withdrawals HTTP/1.1
+Authorization: {{auth_token}}
+
 
 ### get accrual order
 GET {{accrual_host}}/api/orders/{number} HTTP/1.1
+Authorization: {{auth_token}}
+

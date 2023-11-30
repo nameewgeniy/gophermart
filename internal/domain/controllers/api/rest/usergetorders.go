@@ -1,34 +1,28 @@
 package rest
 
-import "net/http"
+import (
+	"encoding/json"
+	"net/http"
+)
 
 func (h RESTControllersImpl) UserGetOrders(w http.ResponseWriter, r *http.Request) {
 
+	res, err := h.userService.UserGetOrders()
+
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	body, err := json.Marshal(res)
+
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
 	w.Header().Set("Content-type", "application/json")
 
-	h.userService.UserGetOrders()
-
-	res := `
-	[
-		  {
-			  "number": "9278923470",
-			  "status": "PROCESSED",
-			  "accrual": 500,
-			  "uploaded_at": "2020-12-10T15:15:45+03:00"
-		  },
-		  {
-			  "number": "12345678903",
-			  "status": "PROCESSING",
-			  "uploaded_at": "2020-12-10T15:12:01+03:00"
-		  },
-		  {
-			  "number": "346436439",
-			  "status": "INVALID",
-			  "uploaded_at": "2020-12-09T16:09:53+03:00"
-		  }
-	  ]
-	`
-
-	w.Write([]byte(res))
+	w.Write(body)
 	w.WriteHeader(http.StatusOK)
 }

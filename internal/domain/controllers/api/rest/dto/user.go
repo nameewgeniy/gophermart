@@ -6,29 +6,45 @@ import (
 )
 
 type RegisterUser struct {
-	Login    string
-	Password string
+	Login    string `json:"login"`
+	Password string `json:"password"`
 }
 
 type LoginUser struct {
-	RegisterUser
+	Login    string `json:"login"`
+	Password string `json:"password"`
+}
+
+type LoginUserResponse struct {
+	AccessToken  string
+	RefreshToken string
 }
 
 type CreateOrder struct {
-	Id string
+	Number string
 }
 
 type GetOrders struct {
-	Id string
+	Number     string    `json:"number"`
+	Status     string    `json:"status"`
+	Accrual    int       `json:"accrual"`
+	UploadedAt time.Time `json:"uploaded_at"`
 }
 
 type GetUserBalance struct {
+	Current   float64 `json:"current"`
+	Withdrawn int     `json:"withdrawn"`
 }
 
 type UserBalanceWithdraw struct {
+	Order string `json:"order"`
+	Sum   int    `json:"sum"`
 }
 
 type UserWithdraws struct {
+	Order       string    `json:"order"`
+	Sum         int       `json:"sum"`
+	ProcessedAt time.Time `json:"processed_at"`
 }
 
 type GetUser struct {
