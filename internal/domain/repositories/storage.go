@@ -24,7 +24,8 @@ type OrderRepository interface {
 	FindUserOrders(user uuid.UUID) ([]models.Order, error)
 }
 
-type TransactionRepository interface {
-	CreateTransaction(tr models.Transaction) error
-	FindUserTransactions(user uuid.UUID) ([]models.Transaction, error)
+type WithdrawTransactionRepository interface {
+	CreateWithdrawTransaction(tr models.Transaction) error
+	FindUserWithdrawTransaction(user uuid.UUID, number string) (*models.Transaction, error)
+	FindUserWithdrawTransactions(user uuid.UUID) ([]models.Transaction, error)
 }

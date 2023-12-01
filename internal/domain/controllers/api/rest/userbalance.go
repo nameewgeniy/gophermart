@@ -2,12 +2,13 @@ package rest
 
 import (
 	"encoding/json"
+	"github.com/google/uuid"
 	"net/http"
 )
 
 func (h RESTControllersImpl) UserBalance(w http.ResponseWriter, r *http.Request) {
 
-	res, err := h.userService.UserBalance()
+	res, err := h.userService.UserBalance(uuid.UUID{})
 
 	if err != nil {
 		// TODO неверная пара логин/пароль; 401

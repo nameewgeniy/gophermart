@@ -5,6 +5,7 @@ CREATE TABLE users
     id            UUID UNIQUE PRIMARY KEY,
     login         VARCHAR(100) UNIQUE NOT NULL,
     password_hash VARCHAR(255)        NOT NULL,
+    balance       BIGINT,
     created_at    TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     deleted_at    TIMESTAMP
 );
@@ -17,7 +18,7 @@ CREATE TABLE orders
     user_id     UUID UNIQUE,
     number      VARCHAR(255) UNIQUE,
     status      VARCHAR(255),
-    accrual     INTEGER,
+    accrual     BIGINT,
     uploaded_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (user_id) REFERENCES users (id)
 );
@@ -30,7 +31,7 @@ CREATE TABLE transactions
     id           UUID PRIMARY KEY,
     user_id      UUID UNIQUE,
     "order"      VARCHAR(255) UNIQUE,
-    sum          INTEGER,
+    sum          BIGINT,
     processed_at TIMESTAMP,
     FOREIGN KEY (user_id) REFERENCES users (id)
 );

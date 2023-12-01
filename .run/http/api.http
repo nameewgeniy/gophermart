@@ -3,8 +3,8 @@ POST {{gophermart_host}}/api/user/register
 Content-Type: application/json
 
 {
-  "login": "<login>",
-  "password": "<password>"
+  "login": "admin",
+  "password": "password"
 }
 
 ### login
@@ -12,8 +12,8 @@ POST {{gophermart_host}}/api/user/login
 Content-Type: application/json
 
 {
-"login": "<login>",
-"password": "<password>"
+"login": "admin",
+"password": "password"
 }
 
 > {% client.global.set("auth_token", response.headers.valueOf("Authorization")); %}

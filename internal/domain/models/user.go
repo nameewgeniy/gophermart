@@ -1,6 +1,7 @@
 package models
 
 import (
+	"github.com/Rhymond/go-money"
 	"github.com/golang-jwt/jwt"
 	"github.com/google/uuid"
 	"time"
@@ -31,4 +32,7 @@ type User struct {
 	Id           uuid.UUID
 	Login        string
 	PasswordHash string
+	Balance      money.Money
+	CreatedAt    time.Time
+	DeletedAt    *time.Time
 }

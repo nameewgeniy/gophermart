@@ -41,7 +41,7 @@ func run() error {
 		config.Instance.AuthRefreshTTL(),
 	)
 
-	us := user.NewUserService(storage, au)
+	us := user.NewUserService(storage, storage, storage, au)
 
 	// Init controllers
 	restApi := rest.New(us, au)
