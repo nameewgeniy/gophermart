@@ -22,12 +22,13 @@ type LoginUserResponse struct {
 
 type CreateOrder struct {
 	Number string
+	UserId uuid.UUID
 }
 
 type GetOrders struct {
 	Number     string    `json:"number"`
 	Status     string    `json:"status"`
-	Accrual    int       `json:"accrual"`
+	Accrual    *int      `json:"accrual,omitempty"`
 	UploadedAt time.Time `json:"uploaded_at"`
 }
 

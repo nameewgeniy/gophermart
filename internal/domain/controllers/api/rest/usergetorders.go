@@ -2,12 +2,13 @@ package rest
 
 import (
 	"encoding/json"
+	"github.com/google/uuid"
 	"net/http"
 )
 
 func (h RESTControllersImpl) UserGetOrders(w http.ResponseWriter, r *http.Request) {
 
-	res, err := h.userService.UserGetOrders()
+	res, err := h.userService.UserGetOrders(uuid.UUID{}) // Идентиыикатор авторизованного прользователя
 
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)

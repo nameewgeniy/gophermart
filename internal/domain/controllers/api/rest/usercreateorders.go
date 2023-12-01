@@ -1,6 +1,7 @@
 package rest
 
 import (
+	"github.com/google/uuid"
 	"gophermart/internal/domain/controllers/api/rest/dto"
 	"io"
 	"net/http"
@@ -24,6 +25,7 @@ func (h RESTControllersImpl) UserCreateOrders(w http.ResponseWriter, r *http.Req
 
 	err = h.userService.UserCreateOrders(dto.CreateOrder{
 		Number: string(bytes),
+		UserId: uuid.UUID{}, // TODO получить авторизованного пользователя
 	})
 
 	if err != nil {
