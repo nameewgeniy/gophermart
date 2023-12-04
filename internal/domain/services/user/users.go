@@ -156,8 +156,8 @@ func (u User) UserBalance(id uuid.UUID) (dto.GetUserBalance, error) {
 		return dto.GetUserBalance{}, err
 	}
 
-	Withdrawn := money.New(100, money.RUB)
-	bl, err := us.Balance.Subtract(Withdrawn)
+	withdraw, err := u.w.GetUserSumWithdraw(id)
+	bl, err := us.Balance.Subtract(withdraw)
 
 	if err != nil {
 		return dto.GetUserBalance{}, err
@@ -165,7 +165,7 @@ func (u User) UserBalance(id uuid.UUID) (dto.GetUserBalance, error) {
 
 	return dto.GetUserBalance{
 		Current:   bl.AsMajorUnits(),
-		Withdrawn: Withdrawn.AsMajorUnits(),
+		Withdrawn: withdraw.AsMajorUnits(),
 	}, nil
 }
 

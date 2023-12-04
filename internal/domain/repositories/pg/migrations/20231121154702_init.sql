@@ -15,9 +15,9 @@ CREATE INDEX idx_login ON users (login);
 CREATE TABLE orders
 (
     id          UUID PRIMARY KEY,
-    user_id     UUID UNIQUE,
-    number      VARCHAR(255) UNIQUE,
-    status      VARCHAR(255),
+    user_id     UUID NOT NULL,
+    number      VARCHAR(255) UNIQUE NOT NULL,
+    status      VARCHAR(255) NOT NULL,
     accrual     BIGINT,
     uploaded_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (user_id) REFERENCES users (id)
@@ -29,8 +29,8 @@ CREATE INDEX idx_user_number ON orders (user_id, number);
 CREATE TABLE transactions
 (
     id           UUID PRIMARY KEY,
-    user_id      UUID UNIQUE,
-    "order"      VARCHAR(255) UNIQUE,
+    user_id      UUID NOT NULL,
+    "order"      VARCHAR(255) NOT NULL,
     sum          BIGINT,
     processed_at TIMESTAMP,
     FOREIGN KEY (user_id) REFERENCES users (id)

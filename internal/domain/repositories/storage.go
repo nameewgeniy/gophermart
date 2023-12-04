@@ -2,6 +2,7 @@ package repositories
 
 import (
 	"context"
+	"github.com/Rhymond/go-money"
 	"github.com/google/uuid"
 	"gophermart/internal/domain/models"
 )
@@ -28,4 +29,5 @@ type WithdrawTransactionRepository interface {
 	CreateWithdrawTransaction(tr models.Transaction) error
 	FindUserWithdrawTransaction(user uuid.UUID, number string) (*models.Transaction, error)
 	FindUserWithdrawTransactions(user uuid.UUID) ([]models.Transaction, error)
+	GetUserSumWithdraw(user uuid.UUID) (*money.Money, error)
 }

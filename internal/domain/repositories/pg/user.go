@@ -12,6 +12,15 @@ import (
 	"time"
 )
 
+type userRow struct {
+	Id           string
+	Login        string
+	PasswordHash string
+	Balance      uint64
+	CreatedAt    time.Time
+	DeletedAt    *time.Time
+}
+
 func (p Pg) CreateUser(user models.User) error {
 
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
@@ -25,16 +34,6 @@ func (p Pg) CreateUser(user models.User) error {
 	if err != nil {
 		return fmt.Errorf("pg: CreateUser: Begin Transaction: %w", err)
 	}
-
-	//CREATE TABLE users
-	//(
-	//	id            UUID UNIQUE PRIMARY KEY,
-	//	login         VARCHAR(100) UNIQUE NOT NULL,
-	//	password_hash VARCHAR(255)        NOT NULL,
-	//	balance       BIGINT,
-	//	created_at    TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-	//	deleted_at    TIMESTAMP
-	//);
 
 	query := "INSERT INTO #table# as t (id, login, password_hash, balance) VALUES ($1, $2, $3, $4)"
 	preparedQuery := strings.NewReplacer("#table#", p.usersTable).Replace(query)
@@ -51,35 +50,26 @@ func (p Pg) FindUser(id uuid.UUID) (*models.User, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 
-	res := models.User{}
 	query := "SELECT * FROM #table# WHERE id = $1"
 	preparedQuery := strings.NewReplacer("#table#", p.usersTable).Replace(query)
 
-	rows := p.db.QueryRowContext(ctx, preparedQuery, id)
+	rows := p.db.QueryRowContext(ctx, preparedQuery, id.String())
 
-	//CREATE TABLE users
-	//(
-	//	id            UUID UNIQUE PRIMARY KEY,
-	//	login         VARCHAR(100) UNIQUE NOT NULL,
-	//	password_hash VARCHAR(255)        NOT NULL,
-	//	balance       BIGINT,
-	//	created_at    TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-	//	deleted_at    TIMESTAMP
-	//);
+	row := userRow{}
+	if err := rows.Scan(&row.Id, &row.Login, &row.PasswordHash, &row.Balance, &row.CreatedAt, &row.DeletedAt); err != nil {
 
-	if err := rows.Scan(&res); err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
-			return &res, sql.ErrNoRows // TODO свою ошибку
+			return nil, sql.ErrNoRows // TODO свою ошибку
 		}
 
-		return &res, fmt.Errorf("pg: FindUser: id=%s: %w", id.String(), err)
+		return nil, fmt.Errorf("pg: FindUser: id=%s: %w", id.String(), err)
 	}
 
 	if err := rows.Err(); err != nil {
-		return &res, fmt.Errorf("pg: FindUser: Rows: id=%s: %w", id.String(), err)
+		return nil, fmt.Errorf("pg: FindUser: Rows: id=%s: %w", id.String(), err)
 	}
 
-	return &res, nil
+	return p.mapRowToUser(row)
 }
 
 func (p Pg) FindUserByLogin(login string) (*models.User, error) {
@@ -91,15 +81,7 @@ func (p Pg) FindUserByLogin(login string) (*models.User, error) {
 
 	rows := p.db.QueryRowContext(ctx, preparedQuery, login)
 
-	row := struct {
-		Id           string
-		Login        string
-		PasswordHash string
-		Balance      uint64
-		CreatedAt    time.Time
-		DeletedAt    *time.Time
-	}{}
-
+	row := userRow{}
 	if err := rows.Scan(&row.Id, &row.Login, &row.PasswordHash, &row.Balance, &row.CreatedAt, &row.DeletedAt); err != nil {
 
 		if errors.Is(err, sql.ErrNoRows) {
@@ -113,10 +95,14 @@ func (p Pg) FindUserByLogin(login string) (*models.User, error) {
 		return nil, fmt.Errorf("pg: FindUserByLogin: Rows: login=%s: %w", login, err)
 	}
 
+	return p.mapRowToUser(row)
+}
+
+func (p Pg) mapRowToUser(row userRow) (*models.User, error) {
 	uid, err := uuid.Parse(row.Id)
 
 	if err != nil {
-		return nil, fmt.Errorf("pg: FindUserByLogin: uuid parse: %w", err)
+		return nil, fmt.Errorf("pg: mapRowToUser: uuid parse: %w", err)
 	}
 
 	return &models.User{

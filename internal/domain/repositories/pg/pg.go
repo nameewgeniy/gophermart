@@ -7,19 +7,21 @@ import (
 )
 
 type Pg struct {
-	db         *sql.DB
-	mDialect   string
-	mDir       string
-	usersTable string
+	db          *sql.DB
+	mDialect    string
+	mDir        string
+	usersTable  string
+	ordersTable string
 }
 
 func New() (*Pg, error) {
 
 	var err error
 	pg := &Pg{
-		mDialect:   "postgres",
-		mDir:       "migrations",
-		usersTable: "users",
+		mDialect:    "postgres",
+		mDir:        "migrations",
+		usersTable:  "users",
+		ordersTable: "orders",
 	}
 
 	pg.db, err = initDB()
